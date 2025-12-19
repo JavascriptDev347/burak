@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import router from "./routes";
 
 //  1- entrance
 const app = express();
@@ -13,10 +14,11 @@ app.use(express.json());
 // 2 -session
 
 // 3- views
-app.set("viewss", path.join(__dirname, "views"))
+app.set("views", path.join(__dirname, "views"))
 app.set("view engine", "ejs");
 
 // 4- routing
+app.use("/",router)
 
 export default app;
 

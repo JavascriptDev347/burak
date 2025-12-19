@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import app from "./app";
 // dotenv config
 dotenv.config();
-
+//[36-37] Environmental variables and Express (part-3) => START
 
 //  mongoose conntect to db
 mongoose.connect(process.env.MONGO_URL as string, {}).then(data => {
