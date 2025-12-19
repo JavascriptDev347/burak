@@ -5,11 +5,8 @@ import routerAdmin from "./routerAdmin";
 
 //  1- entrance
 const app = express();
-// public ichidagi filelarni to'g'ridan-to'g'ri serve qilish uchun ishlatiladi.
 app.use(express.static(path.join(__dirname, "public")));
-// bodydan keladigan {} larni o'qish uchun, extended true degani ichma-ich {} larni o'qiy olish uchun
 app.use(express.urlencoded({extended: true}));
-// jsonda parse qilish uchun
 app.use(express.json());
 
 // 2 -session
