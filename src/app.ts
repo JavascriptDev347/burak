@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import router from "./routes";
+import routerAdmin from "./routerAdmin";
 
 //  1- entrance
 const app = express();
@@ -18,7 +19,8 @@ app.set("views", path.join(__dirname, "views"))
 app.set("view engine", "ejs");
 
 // 4- routing
-app.use("/",router)
+app.use("/admin", routerAdmin) // SSR: ejs
+app.use("/", router) // for user => REACT
 
 export default app;
 
