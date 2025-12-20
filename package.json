@@ -18,8 +18,10 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/connect-mongodb-session": "^2.4.8",
     "@types/express": "^5.0.6",
+    "bcryptjs": "^3.0.3",
     "connect-mongodb-session": "^5.0.0",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
