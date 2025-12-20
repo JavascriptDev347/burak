@@ -8,9 +8,9 @@ export interface Member {
     memberNick: string;
     memberPhone: string;
     memberPassword?: string;
-    memberAddress?: string;
-    memberDesc?: string;
-    memberImage?: string;
+    memberAddress?: string | null;
+    memberDesc?: string | null;
+    memberImage?: string | null;
     memberPoints: number;
     createdAt: Date;
     updatedAt: Date;
@@ -26,4 +26,9 @@ export interface MemberInput {
     memberDesc?: string;
     memberImage?: string;
     memberPoints?: number;
+}
+
+export interface LoginInput {
+    memberNick: string;
+    memberPassword: string;
 }

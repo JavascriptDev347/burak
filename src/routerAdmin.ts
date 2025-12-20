@@ -5,8 +5,12 @@ const routerAdmin = express.Router();
 
 routerAdmin.get("/", restaurantController.goHome);
 
-routerAdmin.post("/login", restaurantController.getLogin);
+routerAdmin
+    .get("/login", restaurantController.getLogin)
+    .post("/login", restaurantController.processLogin);
 
-routerAdmin.post("/signup", restaurantController.getSingup);
+routerAdmin
+    .get("/signup", restaurantController.getSingup)
+    .post("/signup", restaurantController.processSignup);
 
 export default routerAdmin;
