@@ -47,5 +47,7 @@ const memberSchema = new Schema({
         timestamps: true // timestaps - database da createdAt va updatedAt ma'lumotlarni qo'yib beradi.
     }
 );
-
+// bu yerda schemami modelga parse bo'lyabdi shuning uchun class qaytadi
+// mongoose.model() Schema’ni oladi va undan MongoDB bilan ishlaydigan Model class hosil qiladi.
+// Model class – bu constructor va statik/funksional metodlar to‘plami.
 export default mongoose.model("Member", memberSchema);
