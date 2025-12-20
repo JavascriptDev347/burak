@@ -21,12 +21,13 @@ restaurantController.getLogin = (req: Request, res: Response) => {
 };
 
 restaurantController.getSingup = (req: Request, res: Response) => {
-
     try {
+
         res.send("Signup page");
     } catch (err) {
         console.log("Error, getSignup:", err)
     }
 };
+
 
 export default restaurantController;
