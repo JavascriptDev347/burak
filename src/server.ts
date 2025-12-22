@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import app from "./app";
 dotenv.config();
+import app from "./app";
 
-// [42-43] Member - Service Model (admin login) & Bcrypt va Authentication (PART-1)
 
 mongoose.connect(process.env.MONGO_URL as string, {}).then(data => {
     console.log("MONGO_URL connected");

@@ -11,7 +11,6 @@ class MemberService {
         this.memberModel = MemberModel; // qachongi yangi new MemberService qilganimda constructor ishga tushadi
     }
 
-
     //📌📌📌📌📌📌📌📌📌📌📌 SPA 📌📌📌📌📌📌📌📌📌📌📌
     public async signup(input: MemberInput): Promise<Member> {
         const salt = await bcrypt.genSalt();
