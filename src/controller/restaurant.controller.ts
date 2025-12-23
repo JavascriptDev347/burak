@@ -3,7 +3,7 @@ import {NextFunction, Request, Response} from "express";
 import {AdminRequest, LoginInput, MemberInput} from "../lib/types/member";
 import MemberService from "../model/Member.service";
 import {MemberType} from "../lib/enums/member.enum";
-import Errors, {Message} from "../lib/Error";
+import Errors, {HttpCode, Message} from "../lib/Error";
 
 const restaurantController: T = {};
 
@@ -39,10 +39,9 @@ restaurantController.processSignup = async (req: AdminRequest, res: Response) =>
         const newMember: MemberInput = req.body;
         newMember.memberType = MemberType.RESTAURANT;
         const memberService = new MemberService();
-        const result = await memberService.processSignup(newMember);
         // SESSION AUTHENTICATION
 
-        req.session.member = result;
+        req.session.member = await memberService.processSignup(newMember);
         req.session.save(function (err) {
             if (err) {
                 console.log("session save error:", err)
@@ -63,8 +62,7 @@ restaurantController.processLogin = async (req: AdminRequest, res: Response) => 
         console.log("processLogin");
         const input: LoginInput = req.body;
         const memberService = new MemberService();
-        const result = await memberService.processLogin(input);
-        req.session.member = result;
+        req.session.member = await memberService.processLogin(input);
         req.session.save(function () {
             res.redirect("/admin/product/all")
         });
@@ -121,6 +119,20 @@ restaurantController.getUsers = async (req: AdminRequest, res: Response) => {
     } catch (err) {
         console.log("Error, getUsers:", err);
         res.redirect("/admin/login")
+    }
+}
+
+restaurantController.updateChosenUser = async (req: Request, res: Response) => {
+    try {
+        console.log("updateChosenUser");
+        const memberService = new MemberService();
+        const result = await memberService.updateChosenUser(req.body);
+
+        res.status(HttpCode.OK).json({data: result});
+    } catch (err) {
+        console.log("Error, updateChosenUser:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
     }
 }
 export default restaurantController;
