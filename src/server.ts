@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 dotenv.config();
 import app from "./app";
-
+// [53-54] EJS - Admin Login va Signup jarayoni (PART-1)
 
 mongoose.connect(process.env.MONGO_URL as string, {}).then(data => {
     console.log("MONGO_URL connected");

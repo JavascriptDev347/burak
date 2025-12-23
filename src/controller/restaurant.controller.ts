@@ -7,10 +7,9 @@ import Errors, {Message} from "../lib/Error";
 
 const restaurantController: T = {};
 
-
 restaurantController.goHome = (req: Request, res: Response) => {
     try {
-        res.send("Home page");
+        res.render("home");
     } catch (err) {
         console.log("Error, goHome:", err)
     }
@@ -19,7 +18,7 @@ restaurantController.goHome = (req: Request, res: Response) => {
 restaurantController.getLogin = (req: Request, res: Response) => {
 
     try {
-        res.send("Login page");
+        res.render("login");
     } catch (err) {
         console.log("Error, getLogin:", err)
     }
@@ -28,7 +27,7 @@ restaurantController.getLogin = (req: Request, res: Response) => {
 restaurantController.getSingup = (req: Request, res: Response) => {
     try {
 
-        res.send("Signup page");
+        res.render("signup");
     } catch (err) {
         console.log("Error, getSignup:", err)
     }
