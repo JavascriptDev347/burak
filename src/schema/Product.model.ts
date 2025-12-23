@@ -35,12 +35,13 @@ const productSchema = new Schema({
 
     productVolume: {
         type: Number,
-        enum: ProductVolume,
+        enum: Object.values(ProductVolume).filter(v => typeof v === 'number'),
         default: ProductVolume.ONE,
     },
 
     productDesc: {
-        type: String
+        type: String,
+        default: ""
     },
 
     productImages: {

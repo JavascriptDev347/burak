@@ -2,7 +2,12 @@
  -->
 <%- include('includes/header') %>
 <body>
-<div>USERS</div>
+<div>USERS PAGE</div>
+<div>
+    <% users.map((value, key) => { %>
+        <p><%= value.memberNick %> - <%= value.memberPhone %></p>
+    <% }) %>
+</div>
 </body>
 
 <%- include('includes/footer') %>

@@ -12,6 +12,7 @@
     "paths": {
       "*": ["node_modules/*"]
     }
+    //    "strictNullChecks": true
   },
 
   "include": ["src/**/*.ts"],

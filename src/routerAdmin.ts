@@ -2,6 +2,7 @@ import express from "express";
 import restaurantController from "./controller/restaurant.controller";
 import productController from "./controller/product.controller";
 import makeUploader from "./lib/utils/uploader";
+import memberController from "./controller/member.controller";
 
 const routerAdmin = express.Router();
 
@@ -26,4 +27,7 @@ routerAdmin.post("/product/create", restaurantController.verifyRestaurant, makeU
 
 routerAdmin.post("/product/:id", restaurantController.verifyRestaurant, productController.updateProduct);
 
+
+// === USERS ===
+routerAdmin.get("/user/all", restaurantController.verifyRestaurant, restaurantController.getUsers);
 export default routerAdmin;

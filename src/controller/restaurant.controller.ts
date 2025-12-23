@@ -113,4 +113,15 @@ restaurantController.logout = async (req: AdminRequest, res: Response) => {
 
     }
 };
+
+restaurantController.getUsers = async (req: AdminRequest, res: Response) => {
+    try {
+        const memberService = new MemberService();
+        const result = await memberService.getUsers();
+        res.render("users", {users: result});
+    } catch (err) {
+        console.log("Error, getUsers:", err);
+        res.redirect("/admin/login")
+    }
+}
 export default restaurantController;
