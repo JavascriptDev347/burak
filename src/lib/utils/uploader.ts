@@ -10,14 +10,8 @@ import fs from "fs"
 function getTargetImageStorage(address: any) {
     return multer.diskStorage({
         destination: function (req, file, cb) {
-            // cb(null,`./uploads/${address}`);
-            const uploadPath = path.join("uploads", address);
+            cb(null, `./uploads/${address}`);
 
-            if (!fs.existsSync(uploadPath)) {
-                fs.mkdirSync(uploadPath, {recursive: true});
-            }
-
-            cb(null, uploadPath);
         },
         filename: function (req, file, cb) {
             const extension = path.parse(file.originalname).ext;
@@ -34,3 +28,12 @@ function makeUploader(address: any) {
 }
 
 export default makeUploader;
+
+
+// const uploadPath = path.join("uploads", address);
+//
+// if (!fs.existsSync(uploadPath)) {
+//     fs.mkdirSync(uploadPath, {recursive: true});
+// }
+//
+// cb(null, uploadPath);

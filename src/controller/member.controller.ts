@@ -1,13 +1,29 @@
 import {T} from "../lib/types/common";
-import {Request, Response} from "express";
-import {LoginInput, MemberInput} from "../lib/types/member";
+import {NextFunction, Request, Response} from "express";
+import {ExtendedRequest, LoginInput, MemberInput, MemberUpdateInput} from "../lib/types/member";
 import MemberService from "../model/Member.service";
-import Errors, {HttpCode} from "../lib/Error";
+import Errors, {HttpCode, Message} from "../lib/Error";
 import AuthService from "../model/Auth.service";
 import {AUTH_TIMER} from "../lib/config";
 const memberController: T = {};
 const memberService = new MemberService();
 const authService = new AuthService();
+
+memberController.getRestaurant = async (req: Request, res: Response) => {
+    try {
+        // Standard Log for checking data
+        console.log("getRestaurant");
+
+        const result = await memberService.getRestaurant();
+
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, getRestaurant:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+};
+
 memberController.signup = async (req: Request, res: Response) => {
     try {
         console.log("signup");
@@ -51,5 +67,90 @@ memberController.login = async (req: Request, res: Response) => {
     }
 }
 
+memberController.verifyAuth = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const token = req.cookies["accessToken"];
 
+        if (token) req.member = await authService.checkAuth(token);
+
+        if (!req.member)
+            throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED);
+
+        next()
+    } catch (err) {
+        console.log("Error, verifyAuth:", err)
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+}
+
+memberController.logout = async (req: Request, res: Response) => {
+    try {
+        console.log("logout");
+        res.cookie("accessToken", null, {maxAge: 0, httpOnly: true});
+        res.status(HttpCode.OK).json({logout: true});
+    } catch (err) {
+        console.log("Error, logout:", err)
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+}
+
+memberController.getMemberDetail = async (req: ExtendedRequest, res: Response) => {
+    try {
+        console.log("getMemberDetail");
+        const result = await memberService.getMemberDetail(req.member);
+
+        res.status(HttpCode.OK).json(result);
+
+    } catch (err) {
+        console.log("Error, getMemberDetail:", err)
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+};
+
+memberController.retrieveAuth = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+
+    try {
+        const token = req.cookies["accessToken"];
+
+        if (token) req.member = await authService.checkAuth(token);
+
+        next();
+    } catch (err) {
+        console.log("Error, retrieveAuth:", err)
+        next();
+    }
+};
+
+memberController.updateMember = async (req: ExtendedRequest, res: Response) => {
+    try {
+        console.log("updateMember");
+        const input: MemberUpdateInput = req.body;
+        if (req.file) input.memberImage = req.file.path.replace(/\\/g, "/");
+        const result = await memberService.updateMember(req.member, input);
+
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, updateMember:", err)
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+};
+
+memberController.getTopUsers = async (req: Request, res: Response) => {
+    try {
+        console.log("getTopUsers");
+        const result = await memberService.getTopUsers();
+        res.status(HttpCode.OK).json(result);
+
+        // This error happens when service call fails.
+    } catch (err) {
+        console.log("Error, getTopUsers:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+
+}
 export default memberController;

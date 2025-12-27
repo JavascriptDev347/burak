@@ -18,6 +18,7 @@ const store = new MongoDBStore({
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({extended: true}));
+app.use("/uploads", express.static("./uploads"));
 app.use(express.json());
 app.use(cookieParser())// Brauzer serverga so‘rov yuborganda, cookie’lar oddiy string ko‘rinishida keladi.
 // cookie-parser ularni avtomatik ravishda ajratib, qulay obyektga aylantirib beradi.
@@ -31,7 +32,7 @@ app.use(session({
     },
     store: store,
     resave: true,  // true bo'lsa oxirgi kirgandan yana 3 soat qo'shib hisobledi, false bo'lsa unday emas
-    saveUninitialized: false,
+    saveUninitialized: true,
 }))
 
 app.use(function (req, res, next) {

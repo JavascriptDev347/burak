@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import Errors, {HttpCode, Message} from "../lib/Error";
 
 class AuthService {
+    private readonly secretToken = process.env.SECRET_TOKEN as string;
     constructor() {
     }
 
@@ -18,6 +19,10 @@ class AuthService {
                 ); else resolve(token as string);
             })
         })
+    }
+
+    public async checkAuth(token: string): Promise<Member> {
+        return jwt.verify(token, this.secretToken) as Member;
     }
 }
 
