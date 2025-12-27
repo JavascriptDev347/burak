@@ -1,6 +1,6 @@
 import MemberModel from "../schema/Member.model";
 import {LoginInput, Member, MemberInput, MemberUpdateInput} from "../lib/types/member";
-import {MemberType} from "../lib/enums/member.enum";
+import {MemberStatus, MemberType} from "../lib/enums/member.enum";
 import Errors, {HttpCode, Message} from "../lib/Error";
 import * as bcrypt from "bcryptjs"
 import {shapeIntoMongooseObjectId} from "../lib/config";
@@ -30,9 +30,17 @@ class MemberService {
     }
 
     public async login(input: LoginInput): Promise<Member> {
+        // const member = await this.memberModel.findOne(
+        //     {memberNick: input.memberNick,}, //filter?
+        //     {memberNick: 1, memberPassword: 1}).exec(); // projection
         const member = await this.memberModel.findOne(
-            {memberNick: input.memberNick,}, //filter?
-            {memberNick: 1, memberPassword: 1}).exec(); // projection
+            {
+                memberNick: input.memberNick, memberStatus:
+                    {$ne: MemberStatus.DELETE},
+            },
+            {memberNick: 1, memberPassword: 1, memberStatus: 1})
+            .exec();
+
 
         if (!member) throw new Errors(HttpCode.BAD_REQUEST, Message.NO_MEMBER_NICK);
 
