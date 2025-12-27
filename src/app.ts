@@ -7,7 +7,7 @@ import {MORGAN_FORMAT} from "./lib/config";
 import session from "express-session"; //Session — foydalanuvchi login bo‘lgandan keyin: kimligi, login holati , serverda saqlanib turishi uchun ishlatiladi.
 import ConnectMongoDB from "connect-mongodb-session"; //connect-mongodb-session — sessionlarni MongoDB collection’da saqlab beradigan adapter
 import {T} from "./lib/types/common";
-
+import cookieParser from "cookie-parser";
 const MongoDBStore = ConnectMongoDB(session);
 const store = new MongoDBStore({
     uri: String(process.env.MONGO_URL),
@@ -19,9 +19,10 @@ const app = express();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+app.use(cookieParser())// Brauzer serverga so‘rov yuborganda, cookie’lar oddiy string ko‘rinishida keladi.
+// cookie-parser ularni avtomatik ravishda ajratib, qulay obyektga aylantirib beradi.
 // Morgan — bu Express.js uchun HTTP request logger middleware.
 app.use(morgan(MORGAN_FORMAT));
-
 // 2 -session
 app.use(session({
     secret: String(process.env.SESSION_SECRET),
