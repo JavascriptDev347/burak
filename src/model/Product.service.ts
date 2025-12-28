@@ -1,14 +1,90 @@
 import ProductModel from "../schema/Product.model";
-import {Product, ProductInput, ProductUpdateInput} from "../lib/types/product";
+import {Product, ProductInput, ProductInquiry, ProductUpdateInput} from "../lib/types/product";
 import Errors, {HttpCode, Message} from "../lib/Error";
 import {shapeIntoMongooseObjectId} from "../lib/config";
+import {ProductStatus} from "../lib/enums/product.enum";
+import {T} from "../lib/types/common";
+import {Types} from "mongoose";
+import ViewService from "./View.service";
+import {ViewGroup} from "../lib/enums/view.enum";
+import {ViewInput} from "../lib/types/view";
 
 class ProductService {
     private readonly productModel;
-
+    public viewService;
     constructor() {
         this.productModel = ProductModel;
+        this.viewService = new ViewService();
     }
+
+    public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
+        const match: T = {productStatus: ProductStatus.PROCESS};
+
+        if (inquiry.productCollection)
+            match.productCollection = inquiry.productCollection;
+        if (inquiry.search) {
+            match.productName = {$regex: new RegExp(inquiry.search, "i")};
+        }
+        const sort: T =
+            inquiry.order === "productPrice"
+                ? {[inquiry.order]: 1}
+                : {[inquiry.order]: -1};
+
+        const result = await this.productModel.aggregate([
+            {$match: match},
+            {$sort: sort},
+            {$skip: (inquiry.page - 1) * inquiry.limit},
+            {$limit: (inquiry.limit)}
+        ])
+            .exec()
+        if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+        return result;
+    }
+
+    public async getProduct(
+        memberId: Types.ObjectId,
+        id: string
+    ): Promise<Product> {
+        const productId = shapeIntoMongooseObjectId(id);
+        let result = await this.productModel
+            .findOne({_id: productId, productStatus: ProductStatus.PROCESS})
+            .exec();
+        if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+        if (memberId) {
+            // Check existence
+            const input: ViewInput = {
+                memberId: memberId,
+                viewRefId: productId,
+                viewGroup: ViewGroup.PRODUCT,
+            };
+            const existView = await this.viewService.checkViewExistence(input);
+
+            console.log("exist", existView);
+
+            console.log("exist:", !!existView);
+
+            if (!existView) {
+                // Insert View
+                console.log("Planning insert to new view");
+                await this.viewService.insertMemberView(input);
+
+                // increase Counts
+                result = await this.productModel
+                    .findByIdAndUpdate(
+                        productId,
+                        {$inc: {productViews: +1}},
+                        {new: true}
+                    )
+                    .exec();
+            }
+        }
+
+        // @ts-ignore
+        return result;
+    }
+
+
 
     public async getAllProducts(): Promise<Product[]> {
         const result = await this.productModel.find().exec();

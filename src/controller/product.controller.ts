@@ -2,12 +2,41 @@ import ProductService from "../model/Product.service";
 import {T} from "../lib/types/common";
 import {Request, Response} from "express";
 import Errors, {HttpCode, Message} from "../lib/Error";
-import {AdminRequest} from "../lib/types/member";
-import {ProductInput} from "../lib/types/product";
+import {AdminRequest, ExtendedRequest} from "../lib/types/member";
+import {ProductInput, ProductInquiry} from "../lib/types/product";
+import {ProductCollection} from "../lib/enums/product.enum";
 
 const productService = new ProductService();
 
 const productController: T = {};
+
+productController.getProducts = async (req: Request, res: Response) => {
+    try {
+        console.log("getProducts");
+
+        const {page, limit, order, productCollection, search} = req.query;
+
+        const inquiry: ProductInquiry = {
+            order: String(order),
+            page: Number(page),
+            limit: Number(limit),
+        };
+
+        if (productCollection)
+            inquiry.productCollection = productCollection as ProductCollection;
+
+        if (search) inquiry.search = String(search);
+
+        const result = await productService.getProducts(inquiry);
+
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, getProducts", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+        // res.send(err);
+    }
+};
 
 productController.getAllProducts = async (req: Request, res: Response) => {
     try {
@@ -57,4 +86,19 @@ productController.updateProduct = async (req: Request, res: Response) => {
     }
 }
 
+productController.getProduct = async (req: ExtendedRequest, res: Response) => {
+    try {
+        console.log("getProduct");
+        const {id} = req.params;
+
+        const memberId = req.member?._id ?? null;
+        const result = await productService.getProduct(memberId, id);
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, getProduct", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+        // res.send(err);
+    }
+};
 export default productController;
