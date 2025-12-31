@@ -12,6 +12,7 @@ import {ViewInput} from "../lib/types/view";
 class ProductService {
     private readonly productModel;
     public viewService;
+
     constructor() {
         this.productModel = ProductModel;
         this.viewService = new ViewService();
@@ -33,8 +34,8 @@ class ProductService {
         const result = await this.productModel.aggregate([
             {$match: match},
             {$sort: sort},
-            {$skip: (inquiry.page - 1) * inquiry.limit},
-            {$limit: (inquiry.limit)}
+            {$skip: (inquiry.page * 1 - 1) * inquiry.limit || 1},
+            {$limit: (inquiry.limit * 1) || 10}
         ])
             .exec()
         if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
@@ -83,7 +84,6 @@ class ProductService {
         // @ts-ignore
         return result;
     }
-
 
 
     public async getAllProducts(): Promise<Product[]> {

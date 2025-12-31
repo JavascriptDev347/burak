@@ -15,4 +15,8 @@ router.get("/member/top-users", memberController.getTopUsers);
 router.get("/product/all", productController.getProducts);
 router.get("/product/:id", memberController.retrieveAuth, productController.getProduct);
 router.post("/order/create", memberController.verifyAuth, orderController.createOrder);
+router.get("/order/all", memberController.verifyAuth, orderController.getMyOrders);
+router.get("/order/:id", (req, res) => {
+    res.send("hello world")
+})
 export default router;
